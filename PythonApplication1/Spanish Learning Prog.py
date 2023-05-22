@@ -1,7 +1,9 @@
 ﻿import random
+import kivy_interface
 
 def main():
-    generate_question()
+    kivy_interface.QuizApp().run()
+    ##generate_question()
 
     ## random select a spanish_words[i]
     ## randomly select three definitions
@@ -62,28 +64,42 @@ def generate_question():
     options = ['a', 'b', 'c', 'd']
     letter = random.choice(options)
 
-    print
+    print("What is the correct definition?")
+    print(word)
 
     # else/if prints to user the list of answers to choose from
     if letter == 'a':
+        correctAnswer = 'a'
         print("a. " + correctChoice)
         print("b. " + wrongChoice1)
         print("c. " + wrongChoice2)
         print("d. " + wrongChoice3)
     elif letter == 'b':
+        correctAnswer = 'b'
         print("a. " + wrongChoice1)
         print("b. " + correctChoice)
         print("c. " + wrongChoice2)
         print("d. " + wrongChoice3)
-    elif letter == 'b':
+    elif letter == 'c':
+        correctAnswer = 'c'
         print("a. " + wrongChoice1)
         print("b. " + wrongChoice2)
         print("c. " + correctChoice)
         print("d. " + wrongChoice3)
     elif letter == 'd':
+        correctAnswer = 'd'
         print("a. " + wrongChoice1)
         print("b. " + wrongChoice2)
         print("c. " + wrongChoice3)
         print("d. " + correctChoice)
+
+    # this compares the correct answer to the answer the user has selected
+    userAnswer = input("Enter answer: ")
+    if correctAnswer != userAnswer:
+        print("INCORRECT")
+        print(" ")
+    elif correctAnswer == userAnswer:
+        print("CORRECT")
+        print(" ")
 
 main()
