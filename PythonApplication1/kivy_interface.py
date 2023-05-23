@@ -5,11 +5,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.clock import Clock
 
- 
+
 class QuizApp(App):
     def build(self):
-        self.remaining_time = 30  # Amount of time user has
-        self.layout = GridLayout(cols=1)  # Layout to hold the widgets
         self.spanish_words = ["el / la", "de", "que", "y", "a", "en", "un", "ser", "se", "no", 
         "haber", "por", "con", "su", "para", "como", "estar", "tener", "le", "lo", \
         "lo", "todo", "pero", "más", "hacer", "o", "poder", "decir", "este / esta", "ir", \
@@ -35,6 +33,12 @@ class QuizApp(App):
         "such, too, so", "where", "now", "part, portion", "after", "life", "to remain, stay", "always", "to believe", "to speak, talk", \
         "to take, carry", "to let, leave", "nothing", "each, every", "to follow", "less, fewer", "new", "to find" ]
 
+        self.layout = GridLayout(cols=1)  # Layout to hold the widgets
+        self.remaining_time = 30  # Amount of time user has
+        self.totalScore = 0 # initiates user total score
+        self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
+        self.layout.add_widget(self.time_label)
+        Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
         self.generate_question()
         return self.layout
 
@@ -71,8 +75,9 @@ class QuizApp(App):
         options = ['a', 'b', 'c', 'd']
         letter = random.choice(options)
 
-        self.layout.add_widget(Label(text="What is the correct definition?")) # label prints question to user
-        self.layout.add_widget(Label(text=word)) # prints the spanish word user needs to translate
+        word = "[color=#7E8CBD][b]" + word + "[/b][/color]" # formats word to stand out when printed
+        self.layout.add_widget(Label(text="What is the correct definition? \n \n" + word, halign='center', markup=True)) # label prints question to user
+        ##self.layout.add_widget(Label(text=word)) # prints the spanish word user needs to translate
 
         # Add buttons for the answer choices
         if letter == 'a': # sets correct answer as first widget
@@ -104,7 +109,22 @@ class QuizApp(App):
             print("INCORRECT")
         elif correctAnswer == userAnswer:
             print("CORRECT")
+            self.totalScore += 1 # adds point to total user score
         self.generate_question()  # Regenerate a new question
+
+    # this function is responsible for updating game timer every second
+    def update_time(self, dt):
+        self.remaining_time -= 1
+        self.time_label.text = "Remaining Time: " + str(self.remaining_time)
+        if self.remaining_time == 0:
+            self.end_game()
+
+    ## this function prints end screen when called. Prints "Game Over" and player final score
+    def end_game(self): 
+        self.layout.clear_widgets()
+        # assigns "Game Over" text and final score to a label
+        game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore), halign='center') # assigns label text to variable
+        self.layout.add_widget(game_over_label) # prints final game over screen text
 
 QuizApp().run()
 
