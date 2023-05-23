@@ -5,7 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.clock import Clock
 
-
+ 
 class QuizApp(App):
     def build(self):
         self.remaining_time = 30  # Amount of time user has
