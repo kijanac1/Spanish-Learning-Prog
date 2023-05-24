@@ -24,6 +24,7 @@
   <ItemGroup>
     <Compile Include="kivy_interface.py" />
     <Compile Include="Spanish Learning Prog.py" />
+    <Compile Include="wordsAndDefinitions.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.11" />

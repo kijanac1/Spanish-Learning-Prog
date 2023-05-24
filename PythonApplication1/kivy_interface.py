@@ -4,34 +4,14 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.clock import Clock
+import wordsAndDefinitions
 
 
+# this class is responsible for the main logic of the app
 class QuizApp(App):
     def build(self):
-        self.spanish_words = ["el / la", "de", "que", "y", "a", "en", "un", "ser", "se", "no", 
-        "haber", "por", "con", "su", "para", "como", "estar", "tener", "le", "lo", \
-        "lo", "todo", "pero", "más", "hacer", "o", "poder", "decir", "este / esta", "ir", \
-        "otro", "ese", "la", "si", "me", "ya", "ver", "porque", "dar", "cuando", \
-        "él", "muy", "sin", "vez", "mucho", "saber", "qué", "sobre", "mi", "alguno", \
-        "mismo", "yo", "también", "hasta", "año", "dos", "querer", "entre", "así", 'primero', \
-        "desde", "grande", "eso", "ni", "nos", "llegar", "pasar", "tiempo", "ella", "sí", \
-        "día", "uno", "bien", "poco", "deber", "entonces", "poner", "cosa", "tanto", "hombre", \
-        "parecer", "nuestro", "tan", "donde", "ahora", "parte", "después", "vida", "quedar", "siempre", \
-        "creer", "hablar", "llevar", "dejar", "nada", "cada", "seguir", "menos", "nuevo", "encontrar" ]
-
-        self.definitions = ["the", "of, from", "that, which", "and", "to, at", "in, on", "a, an", "to be", "-self, oneself", "no", \
-        "to have", "by, for, through", "with", "his, her, their, your", "for, to, in order to", "like, as", "to be", "to have", \
-        "[3rd pers. indirect object pronoun]", "the", \
-        "[3rd pers. masc. direct object pronoun]", "all, every", "but, yet, except", "more", "to do, make", "or", "to be able to, can", \
-        "to tell, say", "this", "to go", \
-        "other, another", "that", "[3rd pers. fem. direct object pronoun]", "if, whether", "me", "already, still", "to see", \
-        "because", "to give", "when", "he", "very, really", "without", "time, occurrence", "much, many", "to know", \
-        "what?, which?, how?", "on top of, over, about", "my", "some, someone", "same", "I", "also", "until, up to", "year", \
-        "two", "to want, love", "between", "like that", "first", "from, since", "large, great, big", "that", "not even, neither, nor", \
-        "us", "to arrive", "to pass, spend (time)", "time, weather", "she", "yes", "day", "one", "well", "little, few", \
-        "should, out to, to owe", "so, then", "to put, get", "thing", "much", "man, mankind, husband", "to seem, look like", "our", \
-        "such, too, so", "where", "now", "part, portion", "after", "life", "to remain, stay", "always", "to believe", "to speak, talk", \
-        "to take, carry", "to let, leave", "nothing", "each, every", "to follow", "less, fewer", "new", "to find" ]
+        self.spanish_words = wordsAndDefinitions.spanish_words
+        self.definitions = wordsAndDefinitions.definitions
 
         self.layout = GridLayout(cols=1)  # Layout to hold the widgets
         self.remaining_time = 30  # Amount of time user has
@@ -39,8 +19,19 @@ class QuizApp(App):
         self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
         self.layout.add_widget(self.time_label)
         Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
-        self.generate_question()
+        self.generate_menu()  # Generate the initial menu
         return self.layout
+
+    # this function is called when game starts. Generates menu
+    def generate_menu(self): 
+        self.layout.clear_widgets()  # Clear previous widgets
+        start_button = Button(text="Start Quiz", on_press=self.start_quiz)
+        self.layout.add_widget(start_button)
+
+    # function is called when user selects to start quiz
+    def start_quiz(self, instance): 
+        self.layout.clear_widgets() # clears screen to generate updated screen
+        self.generate_question() # generates first question
 
     ## this function responsible for generating a each question for user
     ## will generate a spanish word, and generate four options for the
@@ -125,8 +116,6 @@ class QuizApp(App):
         # assigns "Game Over" text and final score to a label
         game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore), halign='center') # assigns label text to variable
         self.layout.add_widget(game_over_label) # prints final game over screen text
-
-QuizApp().run()
 
 ### will have timed mode
 ### unlimited mode
