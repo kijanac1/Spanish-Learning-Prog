@@ -10,11 +10,12 @@ import wordsAndDefinitions
 # this class is responsible for the main logic of the app
 class QuizApp(App):
     def build(self):
-        self.spanish_words = wordsAndDefinitions.spanish_words
-        self.definitions = wordsAndDefinitions.definitions
+        self.spanish_words = wordsAndDefinitions.common_words + wordsAndDefinitions.household_words # combines all word arrays
+        self.definitions = wordsAndDefinitions.common_definitions + wordsAndDefinitions.household_definitions # combines all definition arrays
+        self.missed_words = [] # space that will hold all words player gets incorrect
 
         self.layout = GridLayout(cols=1)  # Layout to hold the widgets
-        self.remaining_time = 30  # Amount of time user has
+        self.remaining_time = 30 # Amount of time user has
         self.totalScore = 0 # initiates user total score
         self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
         self.layout.add_widget(self.time_label)
@@ -48,11 +49,12 @@ class QuizApp(App):
         z = random.randint(0, len(self.spanish_words) - 1)
 
         # these while loops are to make sure the correct definition doesn't appear more than once
-        while x == i:
+        # if a definition equals another definition, it loops until the definition isn't repeated
+        while self.definitions[x] == self.definitions[i]:
             x = random.randint(0, len(self.spanish_words) - 1)
-        while y == i or y == x:
+        while self.definitions[y] == self.definitions[i] or self.definitions[y] == self.definitions[x]:
             y = random.randint(0, len(self.spanish_words) - 1)
-        while z == i or z == x or z == y:
+        while self.definitions[z] == self.definitions[i] or self.definitions[z] == self.definitions[x] or self.definitions[z] == self.definitions[y]:
             z = random.randint(0, len(self.spanish_words) - 1)
 
 
@@ -66,38 +68,39 @@ class QuizApp(App):
         options = ['a', 'b', 'c', 'd']
         letter = random.choice(options)
 
-        word = "[color=#7E8CBD][b]" + word + "[/b][/color]" # formats word to stand out when printed
-        self.layout.add_widget(Label(text="What is the correct definition? \n \n" + word, halign='center', markup=True)) # label prints question to user
+        bold_word = "[color=#7E8CBD][b]" + word + "[/b][/color]" # formats word to stand out when printed
+        self.layout.add_widget(Label(text="What is the correct definition? \n \n" + bold_word, halign='center', markup=True)) # label prints question to user
         ##self.layout.add_widget(Label(text=word)) # prints the spanish word user needs to translate
 
         # Add buttons for the answer choices
         if letter == 'a': # sets correct answer as first widget
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice))) # a
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice)))
+            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # a
+            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'b': # sets correct answer as second widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice))) # b
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice)))
+            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # b
+            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'c': # sets correct answer as third widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice))) # c
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice)))
+            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # c
+            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'd': # sets correct answer as fourth widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice))) # d
+            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # d
 
     ## This function is called when an answer is selected by the user. 
     ## takes button press and correctChoice as arguments
-    def check_answer(self, instance, correctAnswer): 
+    def check_answer(self, instance, correctAnswer, word):
         userAnswer = instance.text.lower()  # gets text from button pressed. Converts text to lowercase
         if correctAnswer != userAnswer: # compares the correct answer to answer user selected
             print("INCORRECT")
+            self.missed_words.append(word + " - " + correctAnswer)
         elif correctAnswer == userAnswer:
             print("CORRECT")
             self.totalScore += 1 # adds point to total user score
@@ -114,8 +117,33 @@ class QuizApp(App):
     def end_game(self): 
         self.layout.clear_widgets()
         # assigns "Game Over" text and final score to a label
-        game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore), halign='center') # assigns label text to variable
+        total_amt_words = len(self.missed_words) + self.totalScore # tally of total amount of questions user had
+        game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore) + "/" + str(total_amt_words),\
+           halign='center') # assigns label text to variable
         self.layout.add_widget(game_over_label) # prints final game over screen text
+
+        self.layout.add_widget(Button(text="Review Missed Words", on_press=lambda instance: self.review_missed_words()))
+    
+    def review_missed_words(self):
+        self.layout.clear_widgets()
+        missed_word_text = "[color=#7E8CBD][b] Your Missed Words: [/color][/b]"
+        missed_words_label = Label(text=missed_word_text, halign='center', markup=True)
+        self.layout.add_widget(missed_words_label)
+
+        ##for i in range(len(self.missed_words)):
+            ##print(self.missed_words[i] )
+
+        # Concatenate the words into a single string
+
+        missed_words_text = '\n'.join(self.missed_words)
+
+        word_label = Label(text=missed_words_text, halign='center')
+        self.layout.add_widget(word_label)
+
+        blank_label = Label(text="  ")
+        self.layout.add_widget(blank_label)
+
+
 
 ### will have timed mode
 ### unlimited mode
