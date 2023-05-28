@@ -11,34 +11,52 @@ class Menu(GridLayout):
     def __init__(self):
         super(Menu, self).__init__()
         self.cols = 1
-        start_button = Button(text="Start Quiz", on_press=self.start_quiz) # calls start_quiz function when called
-        self.add_widget(start_button) # creates button for start
+        unlimited_button = Button(text="Unlimited Mode", on_press=self.unlimited_quiz) # calls start_quiz function when called
+        self.add_widget(unlimited_button) # creates button for start
+        timed_button = Button(text="Timed Mode", on_press=self.timed_quiz) # calls start_quiz function when called
+        self.add_widget(timed_button) # creates button for start
 
-    def start_quiz(self, instance): # function call to start quiz
+    def unlimited_quiz(self, instance): # function call to start quiz
         self.clear_widgets()  # Clears the menu
-        self.quiz = Quiz() # calls the Quiz class
+        self.quiz = Quiz("unlimited") # calls the Quiz class
         self.add_widget(self.quiz) # Quiz class replaces menu in GUI
 
+    def timed_quiz(self, instance): # function call to start quiz
+        self.clear_widgets()  # Clears the menu
+        self.quiz = Quiz("timed") # calls the Quiz class
+        self.add_widget(self.quiz) # Quiz class replaces menu in GUI
 
 # this class is responsible for the main logic of the app
 class Quiz(GridLayout):
-    def __init__(self):
+    def __init__(self, mode):
         super(Quiz, self).__init__()
         self.cols = 1
         self.spanish_words = wordsAndDefinitions.common_words + wordsAndDefinitions.household_words # combines all word arrays
         self.definitions = wordsAndDefinitions.common_definitions + wordsAndDefinitions.household_definitions # combines all definition arrays
         self.missed_words = [] # space that will hold all words player gets incorrect
-        self.remaining_time = 30 # Amount of time user has
         self.totalScore = 0 # initiates user total score
+        self.mode = mode
+        if mode == "timed":
+            self.generate_question()
+            self.start_timer()
+        else: 
+            self.generate_question()
+    
+
+    # function is called when user selects timed mode
+    def start_timer(self): 
+        self.remaining_time = 30 # Amount of time user has
+        Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
         self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
         self.add_widget(self.time_label)
-        Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
-        self.generate_question() 
 
-    # function is called when user selects to start quiz **** will use this function later
-    ###def start_quiz(self, instance): 
-        ###self.layout.clear_widgets() # clears screen to generate updated screen
-        ###self.generate_question() 
+    # this function is responsible for updating game timer every second
+    def update_time(self, dt):
+        self.remaining_time -= 1
+        self.time_label.text = "Remaining Time: " + str(self.remaining_time)
+        if self.remaining_time == 0:
+            self.end_game()
+        
 
     ## this function responsible for generating a each question for user
     ## will generate a spanish word, and generate four options for the
@@ -111,13 +129,9 @@ class Quiz(GridLayout):
             print("CORRECT")
             self.totalScore += 1 # adds point to total user score
         self.generate_question()  # Regenerate a new question
-
-    # this function is responsible for updating game timer every second
-    def update_time(self, dt):
-        self.remaining_time -= 1
-        self.time_label.text = "Remaining Time: " + str(self.remaining_time)
-        if self.remaining_time == 0:
-            self.end_game()
+        if self.mode == "timed":
+            self.time_label = Label(text="Remaining Time: " + str(self.remaining_time)) 
+            self.add_widget(self.time_label) # regenerating time label since the app screen is cleared
 
     ## this function prints end screen when called. Prints "Game Over" and player final score
     def end_game(self): 
