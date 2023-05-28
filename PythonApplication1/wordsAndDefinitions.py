@@ -48,5 +48,6 @@ household_definitions = ["sink", "faucet", "stove", "oven", "refrigerator", "fre
         "alarm clock", "to sleep", "to wake up", "to get up", "to undress", "to read aloud", "to give a bath to", "to undress", "to brush", "to groom", \
         "to shower", "to shave", "toothpaste", "toothbrush", "shampoo", "soap", "towel", "comb", "brush", "razor", "shaving cream", "lotion" ]
 
+#https://www.grittyspanish.com/2019/01/12/household-items-in-spanish/
 
     

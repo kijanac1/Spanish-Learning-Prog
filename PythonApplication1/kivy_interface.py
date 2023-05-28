@@ -6,39 +6,45 @@ from kivy.uix.label import Label
 from kivy.clock import Clock
 import wordsAndDefinitions
 
+# Menu class responsible for generating the initial menu
+class Menu(GridLayout):
+    def __init__(self):
+        super(Menu, self).__init__()
+        self.cols = 1
+        start_button = Button(text="Start Quiz", on_press=self.start_quiz) # calls start_quiz function when called
+        self.add_widget(start_button) # creates button for start
+
+    def start_quiz(self, instance): # function call to start quiz
+        self.clear_widgets()  # Clears the menu
+        self.quiz = Quiz() # calls the Quiz class
+        self.add_widget(self.quiz) # Quiz class replaces menu in GUI
+
 
 # this class is responsible for the main logic of the app
-class QuizApp(App):
-    def build(self):
+class Quiz(GridLayout):
+    def __init__(self):
+        super(Quiz, self).__init__()
+        self.cols = 1
         self.spanish_words = wordsAndDefinitions.common_words + wordsAndDefinitions.household_words # combines all word arrays
         self.definitions = wordsAndDefinitions.common_definitions + wordsAndDefinitions.household_definitions # combines all definition arrays
         self.missed_words = [] # space that will hold all words player gets incorrect
-
-        self.layout = GridLayout(cols=1)  # Layout to hold the widgets
         self.remaining_time = 30 # Amount of time user has
         self.totalScore = 0 # initiates user total score
         self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
-        self.layout.add_widget(self.time_label)
+        self.add_widget(self.time_label)
         Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
-        self.generate_menu()  # Generate the initial menu
-        return self.layout
+        self.generate_question() 
 
-    # this function is called when game starts. Generates menu
-    def generate_menu(self): 
-        self.layout.clear_widgets()  # Clear previous widgets
-        start_button = Button(text="Start Quiz", on_press=self.start_quiz)
-        self.layout.add_widget(start_button)
-
-    # function is called when user selects to start quiz
-    def start_quiz(self, instance): 
-        self.layout.clear_widgets() # clears screen to generate updated screen
-        self.generate_question() # generates first question
+    # function is called when user selects to start quiz **** will use this function later
+    ###def start_quiz(self, instance): 
+        ###self.layout.clear_widgets() # clears screen to generate updated screen
+        ###self.generate_question() 
 
     ## this function responsible for generating a each question for user
     ## will generate a spanish word, and generate four options for the
     ## user to select the correct answer
     def generate_question(self):
-        self.layout.clear_widgets()  # Clear previous widgets
+        self.clear_widgets()  # Clear previous widgets
 
         i = random.randint(0, len(self.spanish_words) - 1)  # This determines the index of the spanish word in our array
         word = self.spanish_words[i]  # Assign the indexed word to a variable that user will need to translate
@@ -69,30 +75,30 @@ class QuizApp(App):
         letter = random.choice(options)
 
         bold_word = "[color=#7E8CBD][b]" + word + "[/b][/color]" # formats word to stand out when printed
-        self.layout.add_widget(Label(text="What is the correct definition? \n \n" + bold_word, halign='center', markup=True)) # label prints question to user
+        self.add_widget(Label(text="What is the correct definition? \n \n" + bold_word, halign='center', markup=True)) # label prints question to user
         ##self.layout.add_widget(Label(text=word)) # prints the spanish word user needs to translate
 
         # Add buttons for the answer choices
         if letter == 'a': # sets correct answer as first widget
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # a
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # a
+            self.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'b': # sets correct answer as second widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # b
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # b
+            self.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'c': # sets correct answer as third widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # c
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # c
+            self.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
         elif letter == 'd': # sets correct answer as fourth widget
-            self.layout.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
-            self.layout.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # d
+            self.add_widget(Button(text=wrongChoice1, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
+            self.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # d
 
     ## This function is called when an answer is selected by the user. 
     ## takes button press and correctChoice as arguments
@@ -115,33 +121,36 @@ class QuizApp(App):
 
     ## this function prints end screen when called. Prints "Game Over" and player final score
     def end_game(self): 
-        self.layout.clear_widgets()
+        self.clear_widgets()
         # assigns "Game Over" text and final score to a label
         total_amt_words = len(self.missed_words) + self.totalScore # tally of total amount of questions user had
         game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore) + "/" + str(total_amt_words),\
            halign='center') # assigns label text to variable
-        self.layout.add_widget(game_over_label) # prints final game over screen text
+        self.add_widget(game_over_label) # prints final game over screen text
 
-        self.layout.add_widget(Button(text="Review Missed Words", on_press=lambda instance: self.review_missed_words()))
+        self.add_widget(Button(text="Review Missed Words", on_press=lambda instance: self.review_missed_words()))
     
     def review_missed_words(self):
-        self.layout.clear_widgets()
+        self.clear_widgets()
         missed_word_text = "[color=#7E8CBD][b] Your Missed Words: [/color][/b]"
         missed_words_label = Label(text=missed_word_text, halign='center', markup=True)
-        self.layout.add_widget(missed_words_label)
+        self.add_widget(missed_words_label)
 
         ##for i in range(len(self.missed_words)):
             ##print(self.missed_words[i] )
 
-        # Concatenate the words into a single string
-
         missed_words_text = '\n'.join(self.missed_words)
 
         word_label = Label(text=missed_words_text, halign='center')
-        self.layout.add_widget(word_label)
+        self.add_widget(word_label)
 
         blank_label = Label(text="  ")
-        self.layout.add_widget(blank_label)
+        self.add_widget(blank_label)
+
+class QuizApp(App):
+    def build(self):
+        self.layout = Menu()  # Initial menu screen
+        return self.layout
 
 
 
