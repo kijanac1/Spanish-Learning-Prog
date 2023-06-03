@@ -31,8 +31,8 @@ class Quiz(GridLayout):
     def __init__(self, mode):
         super(Quiz, self).__init__()
         self.cols = 1
-        self.spanish_words = wordsAndDefinitions.common_words + wordsAndDefinitions.household_words # combines all word arrays
-        self.definitions = wordsAndDefinitions.common_definitions + wordsAndDefinitions.household_definitions # combines all definition arrays
+        self.spanish_words = wordsAndDefinitions.spanish_words2 # combines all word arrays
+        self.definitions = wordsAndDefinitions.english_translations # combines all definition arrays
         self.missed_words = [] # space that will hold all words player gets incorrect
         self.totalScore = 0 # initiates user total score
         self.mode = mode
