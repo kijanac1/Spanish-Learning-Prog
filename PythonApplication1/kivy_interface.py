@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.utils import get_color_from_hex
 from kivy.clock import Clock
 import wordsAndDefinitions
 
@@ -26,6 +27,8 @@ class Menu(GridLayout):
         self.quiz = Quiz("timed") # calls the Quiz class
         self.add_widget(self.quiz) # Quiz class replaces menu in GUI
 
+
+
 # this class is responsible for the main logic of the app
 class Quiz(GridLayout):
     def __init__(self, mode):
@@ -33,7 +36,9 @@ class Quiz(GridLayout):
         self.cols = 1
         self.spanish_words = wordsAndDefinitions.spanish_words2 # combines all word arrays
         self.definitions = wordsAndDefinitions.english_translations # combines all definition arrays
+        self.reviewed_words = [] # will store all words player reviews
         self.missed_words = [] # space that will hold all words player gets incorrect
+        self.missed_words_bool = [] # will store if review_word was missed or correct
         self.totalScore = 0 # initiates user total score
         self.mode = mode
         if mode == "timed":
@@ -45,7 +50,7 @@ class Quiz(GridLayout):
 
     # function is called when user selects timed mode
     def start_timer(self): 
-        self.remaining_time = 30 # Amount of time user has
+        self.remaining_time = 7 # Amount of time user has
         Clock.schedule_interval(self.update_time, 1)  # Call update_time every second
         self.time_label = Label(text="Remaining Time: " + str(self.remaining_time))
         self.add_widget(self.time_label)
@@ -117,6 +122,13 @@ class Quiz(GridLayout):
             self.add_widget(Button(text=wrongChoice2, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
             self.add_widget(Button(text=wrongChoice3, on_press=lambda instance: self.check_answer(instance, correctChoice, word)))
             self.add_widget(Button(text=correctChoice, on_press=lambda instance: self.check_answer(instance, correctChoice, word))) # d
+        if self.mode == "unlimited":
+            # this line of code will create a button to exit unlimited mode when the user wishes
+            # will take to screen to review missed words
+            button = Button(text="Exit Session", on_press=lambda instance: self.review_missed_words())
+            button.background_color = get_color_from_hex("#0000FF")
+            self.add_widget(button)
+
 
     ## This function is called when an answer is selected by the user. 
     ## takes button press and correctChoice as arguments
@@ -124,10 +136,14 @@ class Quiz(GridLayout):
         userAnswer = instance.text.lower()  # gets text from button pressed. Converts text to lowercase
         if correctAnswer != userAnswer: # compares the correct answer to answer user selected
             print("INCORRECT")
-            self.missed_words.append(word + " - " + correctAnswer)
+            self.reviewed_words.append(word + " - " + correctAnswer)
+            self.missed_words_bool.append("true")
+            self.missed_words.append(correctAnswer)
         elif correctAnswer == userAnswer:
             print("CORRECT")
             self.totalScore += 1 # adds point to total user score
+            self.reviewed_words.append(word + " - " + correctAnswer)
+            self.missed_words_bool.append("false")
         self.generate_question()  # Regenerate a new question
         if self.mode == "timed":
             self.time_label = Label(text="Remaining Time: " + str(self.remaining_time)) 
@@ -137,7 +153,7 @@ class Quiz(GridLayout):
     def end_game(self): 
         self.clear_widgets()
         # assigns "Game Over" text and final score to a label
-        total_amt_words = len(self.missed_words) + self.totalScore # tally of total amount of questions user had
+        total_amt_words = len(self.missed_words_bool) # tally of total amount of questions user had
         game_over_label = Label(text="Time's Up \n \n Total Correct Words: " + str(self.totalScore) + "/" + str(total_amt_words),\
            halign='center') # assigns label text to variable
         self.add_widget(game_over_label) # prints final game over screen text
@@ -145,21 +161,23 @@ class Quiz(GridLayout):
         self.add_widget(Button(text="Review Missed Words", on_press=lambda instance: self.review_missed_words()))
     
     def review_missed_words(self):
-        self.clear_widgets()
-        missed_word_text = "[color=#7E8CBD][b] Your Missed Words: [/color][/b]"
+        self.clear_widgets() # clears screen
+        missed_word_text = "[color=#7E8CBD][b] Missed Words Will Show in Red: [/color][/b]"
         missed_words_label = Label(text=missed_word_text, halign='center', markup=True)
-        self.add_widget(missed_words_label)
+        missed_words_label.size_hint = (None, None)  # Disable automatic size adjustment
+        missed_words_label.size = (2000, 350)  # Set the size manually (width, height)
+        self.add_widget(missed_words_label) # prints text to screen
 
-        ##for i in range(len(self.missed_words)):
-            ##print(self.missed_words[i] )
+        # updated this function so it shows all reviewed words, not just missed words. Will show missed words in red text.
+        for i in range(len(self.missed_words_bool)): # loops through each word and prints to screen
+            if self.missed_words_bool[i] == "true":
+                label = Label(text=self.reviewed_words[i], color=(0.7, 0, 0, 1))  # Prints red if word was missed
+            else:
+                label = Label(text=self.reviewed_words[i]) # word prints white otherwise
+            label.size_hint = (None, None)  # Disable automatic size adjustment
+            label.size = (2000, 50)  # Set the size manually (width, height)
 
-        missed_words_text = '\n'.join(self.missed_words)
-
-        word_label = Label(text=missed_words_text, halign='center')
-        self.add_widget(word_label)
-
-        blank_label = Label(text="  ")
-        self.add_widget(blank_label)
+            self.add_widget(label) # prints final list of words to screen
 
 class QuizApp(App):
     def build(self):
