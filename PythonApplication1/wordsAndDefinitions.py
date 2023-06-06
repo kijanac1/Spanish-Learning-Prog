@@ -151,6 +151,23 @@ english_translations = ['so, so', 'you’re welcome! / no problem!', 'please', '
     "sweet", "savory", "delicious"]
 
 
+homonyms1 = ['a', 'arrollo', 'asar', 'Asia', 'asta', 'barón', 'basta', 'bienes', 'calló', 'cerrar', 'cien', 'ciento', 'cocer', 'halla', 'hierba', 'hierro', \
+    'hola', 'honda', 'mas', 'rallar', 'rebelarse', 'solo', 'si', 'sumo', 'tasa', 'tu', 'tubo']
+homonyms2 = ['ha', 'arroyo', 'azar', 'hacia', 'hasta', 'varón', 'vasta', 'vienes', 'cayó', 'serrar', 'sien', 'siento', 'coser', 'haya', 'hierva', 'yerro', \
+    'ola', 'onda', 'más', 'rayar', 'revelarse', 'sólo', 'sí', 'zumo', 'taza', 'tú', 'tuvo']
+
+
+homonyms1_def = ['to', 'conjugated form, to roll up', 'to roast', 'Asia', 'pole', 'baron', 'enough', 'property', 'conjugated form, to silence', 'to close', \
+    'hunderd', 'hundred', 'to cook', 'conjugated form, to find', 'herb', 'iron', 'hello', 'deep', 'but', 'to grate', 'to rebel', 'alone', 'if', 'supreme', 'rate', \
+    'your', 'pipe']
+
+homonyms2_def = ['conjugated form of haber', 'stream', 'chance, fate', 'toward', 'until', 'man', 'vast', 'conjugated form, to come', 'conjugated form, to fall', 'to saw', \
+    'temple', 'conjugated form, to feel', 'to sew', 'conjugated form, to have', 'conjugated form, to boil', 'mistake', 'wave', 'wave', 'more', 'to make lines on', \
+    'to reveal oneself', 'only', 'yes', 'juice', 'cup', 'you', 'conjugated form, to have']
+
+
 #https://www.grittyspanish.com/2019/01/12/household-items-in-spanish/
 
-    
+    # pick homo1[i] & homo2[i]
+    # randomly pick def one
+    # if player answer matches correct answer win

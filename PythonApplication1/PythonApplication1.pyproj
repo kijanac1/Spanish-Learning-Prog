@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Homonym_Mode.py" />
     <Compile Include="kivy_interface.py" />
     <Compile Include="Spanish Learning Prog.py" />
     <Compile Include="wordsAndDefinitions.py" />

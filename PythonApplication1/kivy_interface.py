@@ -6,16 +6,19 @@ from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.clock import Clock
 import wordsAndDefinitions
+import Homonym_Mode
 
 # Menu class responsible for generating the initial menu
 class Menu(GridLayout):
     def __init__(self):
         super(Menu, self).__init__()
         self.cols = 1
-        unlimited_button = Button(text="Unlimited Mode", on_press=self.unlimited_quiz) # calls start_quiz function when called
-        self.add_widget(unlimited_button) # creates button for start
-        timed_button = Button(text="Timed Mode", on_press=self.timed_quiz) # calls start_quiz function when called
-        self.add_widget(timed_button) # creates button for start
+        unlimited_button = Button(text="Unlimited Mode", on_press=self.unlimited_quiz) # calls unlimited_quiz function when called
+        self.add_widget(unlimited_button) # creates button for unlimited mode
+        timed_button = Button(text="Timed Mode", on_press=self.timed_quiz) # calls timed_quiz function when called
+        self.add_widget(timed_button) # creates button for timed mode
+        homonym_button = Button(text="Homonym Challenge", on_press=self.homonym_mode) # calls homonym_mode function when called
+        self.add_widget(homonym_button) # creates button for homonym mode
 
     def unlimited_quiz(self, instance): # function call to start quiz
         self.clear_widgets()  # Clears the menu
@@ -26,6 +29,11 @@ class Menu(GridLayout):
         self.clear_widgets()  # Clears the menu
         self.quiz = Quiz("timed") # calls the Quiz class
         self.add_widget(self.quiz) # Quiz class replaces menu in GUI
+
+    def homonym_mode(self, instance):
+        self.clear_widgets()
+        self.quiz = Homonym_Mode.Quiz_HomonymMode()
+        self.add_widget(self.quiz)
 
 
 
