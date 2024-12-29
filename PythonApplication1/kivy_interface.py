@@ -5,6 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.clock import Clock
+from kivy.uix.scrollview import ScrollView
 import wordsAndDefinitions
 import Homonym_Mode
 
@@ -169,23 +170,29 @@ class Quiz(GridLayout):
         self.add_widget(Button(text="Review Missed Words", on_press=lambda instance: self.review_missed_words()))
     
     def review_missed_words(self):
-        self.clear_widgets() # clears screen
-        missed_word_text = "[color=#7E8CBD][b] Missed Words Will Show in Red: [/color][/b]"
-        missed_words_label = Label(text=missed_word_text, halign='center', markup=True)
-        missed_words_label.size_hint = (None, None)  # Disable automatic size adjustment
-        missed_words_label.size = (2000, 350)  # Set the size manually (width, height)
-        self.add_widget(missed_words_label) # prints text to screen
+        self.clear_widgets()  # clears screen
 
-        # updated this function so it shows all reviewed words, not just missed words. Will show missed words in red text.
-        for i in range(len(self.missed_words_bool)): # loops through each word and prints to screen
+        # Create a ScrollView to hold the list of missed words
+        scroll_view = ScrollView()
+        words_layout = GridLayout(cols=1, size_hint_y=None)
+        words_layout.bind(minimum_height=words_layout.setter('height'))  # Adjust height based on content
+
+        # Title for the missed words screen
+        missed_word_text = "[color=#7E8CBD][b]Missed Words Will Show in Red:[/b][/color]"
+        title_label = Label(text=missed_word_text, halign='center', markup=True, size_hint_y=None, height=50)
+        self.add_widget(title_label)
+
+        # Add each reviewed word to the layout
+        for i in range(len(self.missed_words_bool)):
             if self.missed_words_bool[i] == "true":
-                label = Label(text=self.reviewed_words[i], color=(0.7, 0, 0, 1))  # Prints red if word was missed
+                label = Label(text=self.reviewed_words[i], color=(0.7, 0, 0, 1), size_hint_y=None, height=40)
             else:
-                label = Label(text=self.reviewed_words[i]) # word prints white otherwise
-            label.size_hint = (None, None)  # Disable automatic size adjustment
-            label.size = (2000, 50)  # Set the size manually (width, height)
+                label = Label(text=self.reviewed_words[i], size_hint_y=None, height=40)
+            words_layout.add_widget(label)
 
-            self.add_widget(label) # prints final list of words to screen
+        # Add the layout with words to the scroll view
+        scroll_view.add_widget(words_layout)
+        self.add_widget(scroll_view)
 
 class QuizApp(App):
     def build(self):
